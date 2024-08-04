@@ -2,17 +2,29 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { defaultModalProps, useModalProps } from "../context/ModalPropsContext";
 import { IoEnter } from "react-icons/io5";
+import { useSocket } from "../context/SocketContext";
+import httpStatus from "http-status";
 
 const JoinGameForm = () => {
-  const [gameCode, setGameCode] = useState("");
   const navigate = useNavigate();
   const { set: setModal } = useModalProps();
+  const socket = useSocket();
+
+  const [gameCode, setGameCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setModal(defaultModalProps);
-    navigate(`/game/${gameCode}`);
+    socket?.emit("fetch-game", gameCode, (response: any) => {
+      if (response.status === httpStatus.NOT_FOUND) {
+        setErrorMessage("Game with this code does not exist.");
+      }
+      if (response.status === httpStatus.OK) {
+        setModal(defaultModalProps);
+        navigate(`/game/${gameCode}`);
+      }
+    });
   };
 
   return (
@@ -43,6 +55,7 @@ const JoinGameForm = () => {
           </button>
         </div>
       </form>
+      <p className="text-center text-red-400">{errorMessage}</p>
     </div>
   );
 };

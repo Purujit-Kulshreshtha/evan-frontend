@@ -1,8 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  defaultModalProps,
-  useModalProps,
-} from "../context/ModalPropsContext";
+import { defaultModalProps, useModalProps } from "../context/ModalPropsContext";
 
 const MultiPurposeModal = () => {
   const { modalProps, set } = useModalProps();

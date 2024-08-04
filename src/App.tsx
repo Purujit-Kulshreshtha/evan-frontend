@@ -4,6 +4,8 @@ import UserDetails from "./pages/UserDetails";
 import Home from "./pages/Home";
 import { Background } from "./components/Background";
 import MultiPurposeModal from "./components/MultiPurposeModal";
+import GamePage from "./pages/GamePage";
+import UserTag from "./components/UserTag";
 
 function App() {
   return (
@@ -12,9 +14,11 @@ function App() {
         <Background />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/game/:gameCode" element={<GamePage />} />
           <Route path="/user" element={<UserDetails />} />
         </Routes>
         <MultiPurposeModal />
+        <UserTag />
       </BrowserRouter>
     </main>
   );

@@ -8,7 +8,6 @@ const UserDetails = () => {
   const { user, set: setUser } = useUser();
   const [username, setUsername] = useState<string | undefined>(user?.name);
   const navigate = useNavigate();
-  console.log(username);
 
   const updateUsername = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

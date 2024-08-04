@@ -2,21 +2,40 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { defaultModalProps, useModalProps } from "../context/ModalPropsContext";
 import { IoIosAddCircle } from "react-icons/io";
+import { User } from "../types";
+import { useUser } from "../context/UserContext";
+import { useSocket } from "../context/SocketContext";
+import httpStatus from "http-status";
 
 const CreateGameForm = () => {
-  const [gameCode, setGameCode] = useState("");
+  const { user } = useUser();
   const navigate = useNavigate();
   const { set: setModal } = useModalProps();
+  const socket = useSocket();
+
+  const [gameCode, setGameCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setModal(defaultModalProps);
-    navigate(`/game/${gameCode}`);
+    const host: User = {
+      name: user?.name || "Anonymous",
+    };
+
+    socket?.emit("create-game", { gameCode, host }, (response: any) => {
+      if (response.status === httpStatus.CONFLICT) {
+        setErrorMessage("Game with this code already exists");
+      }
+      if (response.status === httpStatus.CREATED) {
+        setModal(defaultModalProps);
+        navigate(`/game/${gameCode}`);
+      }
+    });
   };
 
   return (
-    <div className="flex flex-col justify-between items-center py-5">
+    <div className="flex flex-col justify-center items-center py-5">
       <h1 className="text-6xl font-extrabold flex flex-col  justify-center items-center gap-4 md:gap-8 text-center">
         <IoIosAddCircle />
         Create Game
@@ -26,6 +45,7 @@ const CreateGameForm = () => {
           <input
             value={gameCode}
             onChange={(e) => {
+              setErrorMessage("");
               setGameCode(e.target.value);
             }}
             type="text"
@@ -43,6 +63,7 @@ const CreateGameForm = () => {
           </button>
         </div>
       </form>
+      <p className="text-center text-red-400">{errorMessage}</p>
     </div>
   );
 };
