@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { defaultModalProps, useModalProps } from "../context/ModalPropsContext";
 import { IoIosAddCircle } from "react-icons/io";
-import { User } from "../types";
 import { useUser } from "../context/UserContext";
 import { useSocket } from "../context/SocketContext";
 import httpStatus from "http-status";
@@ -19,11 +18,7 @@ const CreateGameForm = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const host: User = {
-      name: user?.name || "Anonymous",
-    };
-
-    socket?.emit("create-game", { gameCode, host }, (response: any) => {
+    socket?.emit("create-game", { gameCode, user }, (response: any) => {
       if (response.status === httpStatus.CONFLICT) {
         setErrorMessage("Game with this code already exists");
       }

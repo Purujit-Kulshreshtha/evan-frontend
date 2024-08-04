@@ -1,9 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { LOCAL_STORAGE_KEYS } from "../constants";
-
-export type User = {
-  name: string;
-};
+import { User } from "../types";
 
 type UserContextType = {
   user: User | null;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useUser } from "../context/UserContext";
 import { useSocket } from "../context/SocketContext";
-import { Game, User } from "../types";
+import { Game } from "../types";
 import httpStatus from "http-status";
 import Container from "../components/Container";
 import Loader from "../components/Loader";
@@ -21,10 +21,7 @@ const GamePage = () => {
         setGame(null);
       }
       if (response.status === httpStatus.OK) {
-        const player: User = {
-          name: user?.name || "",
-        };
-        socket.emit("join-game", gameCode, player, (r: any) => {
+        socket.emit("join-game", gameCode, user, (r: any) => {
           setGame(r.game);
         });
       }
@@ -34,7 +31,7 @@ const GamePage = () => {
     return () => {
       socket.emit("leave-game", gameCode);
     };
-  }, [socket, gameCode, user?.name]);
+  }, [socket, gameCode, user]);
 
   const updateGame = (game: Game) => {
     setGame(game);
@@ -61,7 +58,7 @@ const GamePage = () => {
       {Object.keys(game.players).map((socketId: string) => {
         return (
           <div key={socketId}>
-            <p>{game.players[socketId]}</p>
+            <p>{game.players[socketId].name}</p>
           </div>
         );
       })}
